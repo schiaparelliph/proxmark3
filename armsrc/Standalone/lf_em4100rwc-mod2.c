@@ -139,10 +139,12 @@ void RunMod() {
         if (data_available()) break;
         
         int button_pressed = BUTTON_HELD(1000);
+        if (button_pressed == BUTTON_HOLD)
+            break;
+        
         SpinDelay(300);
-        switch (state) {
-            case 0:
-                // Select mode
+        if (state == 0) {
+            // Select mode
                 Dbprintf("State=0 select slot -click to select next- hold to read", selected);
                 if (button_pressed == 1) {
                     // Long press - switch to simulate mode
@@ -156,8 +158,8 @@ void RunMod() {
                     selected = (selected + 1) % slots_count;
                     LED_Slot(selected);
                 }
-                break;
-            case 1:
+                continue;
+        }else if (state == 1) {
                 // Read mode.
                 DbpString("State=1 read mode- click to read- hold to simulate");
                 if (button_pressed > 0) {
@@ -174,13 +176,10 @@ void RunMod() {
                     
                     Dbprintf("read card: ",low[selected]);
                     FlashLEDs(100, 5);
-#ifdef WITH_FLASH
-                   //J SaveIDtoFlash(selected, low[selected]);
-#endif
                     state = 1;
                 }
-                break;
-            case 2:
+                continue;
+        } else if (state == 2) {
                 // Simulate mode
                 DbpString("State=2 simulate mode - click to simulate - hold to write");
                 if (button_pressed > 0) {
@@ -200,8 +199,8 @@ void RunMod() {
                     state = 2; // Switch to simulate mode
                     
                 }
-                break;
-            case 3:
+                continue;
+        } else if (state == 3) {
                 // Write tag mode
                 DbpString("State=3 write tag- click to write- hold to exit");
                 if (button_pressed > 0) {
@@ -211,7 +210,7 @@ void RunMod() {
                     LED_Slot(selected);
                     LEDsoff();
                     Dbprintf("data available", data_available);
-                    data_available = False;
+                    //data_available = False;
                     break;
                     //state = 0;
                 } else if (button_pressed < 0) {
@@ -222,7 +221,8 @@ void RunMod() {
                     state = 3; // Switch to select mode
                     //DbpString("State=0 select mode");
                 }
-                break;
+                continue;
         }
+        
     }
 }
