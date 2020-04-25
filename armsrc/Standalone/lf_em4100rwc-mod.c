@@ -210,6 +210,8 @@ void RunMod() {
                     SpinDown(100);
                     LED_Slot(selected);
                     LEDsoff();
+                    Dbprintf("data available", data_available);
+                    data_available = False;
                     break;
                     //state = 0;
                 } else if (button_pressed < 0) {
