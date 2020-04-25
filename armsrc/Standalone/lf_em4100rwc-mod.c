@@ -175,7 +175,7 @@ void RunMod() {
                     Dbprintf("read card: ",low[selected]);
                     FlashLEDs(100, 5);
 #ifdef WITH_FLASH
-                    SaveIDtoFlash(selected, low[selected]);
+                   //J SaveIDtoFlash(selected, low[selected]);
 #endif
                     state = 1;
                 }
@@ -209,6 +209,7 @@ void RunMod() {
                     DbpString("Long Press- exit");
                     SpinDown(100);
                     LED_Slot(selected);
+                    return(0);
                     break;
                     //state = 0;
                 } else if (button_pressed < 0) {
