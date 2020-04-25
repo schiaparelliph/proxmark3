@@ -143,7 +143,7 @@ void RunMod() {
         switch (state) {
             case 0:
                 // Select mode
-                DbpString("State=0 select slot -click to select next- hold to read", selected);
+                Dbprintf("State=0 select slot -click to select next- hold to read", selected);
                 if (button_pressed == 1) {
                     // Long press - switch to simulate mode
                     DbpString("Long Press, switch to state=2 read");
@@ -172,7 +172,7 @@ void RunMod() {
                                       
                     CmdEM410xdemod(1, &high[selected], &low[selected], 0);
                     
-                    DbpString("read card: ",low[selected]);
+                    Dbprintf("read card: ",low[selected]);
                     FlashLEDs(100, 5);
 #ifdef WITH_FLASH
                     SaveIDtoFlash(selected, low[selected]);
