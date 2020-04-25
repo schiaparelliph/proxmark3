@@ -130,7 +130,7 @@ void RunMod() {
     //      3 - write to T5555 tag
     uint8_t state = 0;
     slots_count = sizeof(low) / sizeof(low[0]);
-    dbprintf("slots: ",slots_count);  //debug
+    Dbprintf("slots: ",slots_count);  //debug
     
     bba = BigBuf_get_addr();
     LED_Slot(selected);
@@ -143,7 +143,7 @@ void RunMod() {
         switch (state) {
             case 0:
                 // Select mode
-                DbpString("State=0 select slot, click to select next, hold to read",selected);
+                DbpString("State=0 select slot -click to select next- hold to read",selected);
                 if (button_pressed == 1) {
                     // Long press - switch to simulate mode
                     DbpString("Long Press, switch to state=2 read");
