@@ -209,7 +209,7 @@ void RunMod() {
                     DbpString("Long Press- exit");
                     SpinDown(100);
                     LED_Slot(selected);
-                    return(0);
+                    LEDsoff();
                     break;
                     //state = 0;
                 } else if (button_pressed < 0) {
@@ -221,6 +221,6 @@ void RunMod() {
                     //DbpString("State=0 select mode");
                 }
                 break;
-        }
+        }break;
     }
 }
