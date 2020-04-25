@@ -223,6 +223,6 @@ void RunMod() {
                     //DbpString("State=0 select mode");
                 }
                 break;
-        }break;
+        }
     }
 }
