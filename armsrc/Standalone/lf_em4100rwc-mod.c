@@ -32,19 +32,19 @@
 #include "flashmem.h"
 #endif
 
-#define MAX_IND 16 // 4 LEDs - 2^4 combinations
+#define MAX_IND 2 // 4 LEDs - 2^4 combinations
 #define CLOCK 64 //for 125kHz
 
 // low & high - array for storage IDs. Its length must be equal.
 // Predefined IDs must be stored in low[].
 // In high[] must be nulls
-uint64_t low[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-uint32_t high[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+uint64_t low[] = {0,0};
+uint32_t high[] = {0,0};
 uint8_t *bba, slots_count;
 int buflen;
 
 void ModInfo(void) {
-    DbpString("  LF EM4100 read/write/clone mode");
+    DbpString(" modified LF EM4100 read/write/clone mode ");
 }
 
 uint64_t ReversQuads(uint64_t bits) {
@@ -121,7 +121,7 @@ void SaveIDtoFlash(int addr, uint64_t id) {
 void RunMod() {
     StandAloneMode();
     FpgaDownloadAndGo(FPGA_BITSTREAM_LF);
-    Dbprintf("[=] >>  LF EM4100 read/write/clone started  <<");
+    Dbprintf("[=] >> modified LF EM4100 read/write/clone started  <<");
 
     int selected = 0;
     //state 0 - select slot
@@ -130,23 +130,26 @@ void RunMod() {
     //      3 - write to T5555 tag
     uint8_t state = 0;
     slots_count = sizeof(low) / sizeof(low[0]);
+    dbprintf("slots: ",slots_count);  //debug
+    
     bba = BigBuf_get_addr();
     LED_Slot(selected);
     for (;;) {
         WDT_HIT();
         if (data_available()) break;
+        
         int button_pressed = BUTTON_HELD(1000);
         SpinDelay(300);
         switch (state) {
             case 0:
                 // Select mode
-                DbpString("State=0 select slot");
+                DbpString("State=0 select slot, click to select next, hold to read",selected);
                 if (button_pressed == 1) {
                     // Long press - switch to simulate mode
-                    DbpString("Long Press, switch to state=2 simulate");
+                    DbpString("Long Press, switch to state=2 read");
                     SpinUp(100);
                     LED_Slot(selected);
-                    state = 2;
+                    state = 1;
                 } else if (button_pressed < 0) {
                     // Click - switch to next slot
                     DbpString("Short Press, select next slot");
@@ -156,61 +159,65 @@ void RunMod() {
                 break;
             case 1:
                 // Read mode.
-                DbpString("State=1 read mode");
+                DbpString("State=1 read mode, click to read, hold to simulate");
                 if (button_pressed > 0) {
                     // Long press - switch to read mode
-                    DbpString("Long Press, switch to state=3 write t55xx");
+                    DbpString("Long Press, switch to state=2 simulate");
                     SpinUp(100);
                     LED_Slot(selected);
-                    state = 3;
+                    state = 2;
                 } else if (button_pressed < 0) {
                     // Click - exit to select mode
-                    DbpString("Short Press, switch to state=0 select slot");
+                    DbpString("Short Press, reading card");
+                                      
                     CmdEM410xdemod(1, &high[selected], &low[selected], 0);
+                    
+                    DbpString("read card: ",low[selected]);
                     FlashLEDs(100, 5);
 #ifdef WITH_FLASH
                     SaveIDtoFlash(selected, low[selected]);
 #endif
-                    state = 0;
+                    state = 1;
                 }
                 break;
             case 2:
                 // Simulate mode
-                DbpString("State=2 simulate mode");
+                DbpString("State=2 simulate mode, click to simulate, hold to write");
                 if (button_pressed > 0) {
                     // Long press - switch to read mode
-                    DbpString("Long Press, switch to state=1 read mode");
+                    DbpString("Long Press, switch to state=3 write mode");
                     SpinDown(100);
                     LED_Slot(selected);
-                    state = 1;
+                    state = 3;
                 } else if (button_pressed < 0) {
                     // Click - start simulating. Click again to exit from simulate mode
-                    DbpString("Short Press, simulating, click again to exit");
+                    DbpString("Short Press, simulating, click again to simualte");
                     LED_Slot(selected);
                     ConstructEM410xEmulBuf(ReversQuads(low[selected]));
                     FlashLEDs(100, 5);
                     SimulateTagLowFrequency(buflen, 0, 1);
                     LED_Slot(selected);
-                    state = 0; // Switch to select mode
-                    DbpString("state=0 select mode");
+                    state = 2; // Switch to simulate mode
+                    
                 }
                 break;
             case 3:
                 // Write tag mode
-                DbpString("State=3 write tag");
+                DbpString("State=3 write tag, click to write, hold to exit");
                 if (button_pressed > 0) {
                     // Long press - switch to select mode
-                    DbpString("Long Press, switch to state=0 select mode");
+                    DbpString("Long Press, exit");
                     SpinDown(100);
                     LED_Slot(selected);
-                    state = 0;
+                    break;
+                    //state = 0;
                 } else if (button_pressed < 0) {
                     // Click - write ID to tag
                     DbpString("Short Press, writing tag");
                     WriteEM410x(0, (uint32_t)(low[selected] >> 32), (uint32_t)(low[selected] & 0xffffffff));
                     LED_Slot(selected);
-                    state = 0; // Switch to select mode
-                    DbpString("State=0 select mode");
+                    state = 3; // Switch to select mode
+                    //DbpString("State=0 select mode");
                 }
                 break;
         }
