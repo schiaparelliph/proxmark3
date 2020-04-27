@@ -144,23 +144,25 @@ void RunMod() {
         if (state == 0) {
             // Select mode
                 Dbprintf("State=0 select slot -click to select next- hold to read slot: %x", selected);
+                LED_C_ON();
                if (button_pressed == 1) {
                     // Long press - switch to simulate mode
                     DbpString("Long Press, switch to state=2 read");
                     SpinUp(100);
                     LED_Slot(selected);
                     state = 1;
+                    LED_C_OFF();
                 } else if (button_pressed < 0) {
                     // Click - switch to next slot
                     DbpString("Short Press, select next slot");
-                  //  selected = (selected + 1) % slots_count;
-                    selected = (selected + 1);
+                    selected = (selected + 1) % slots_count;
                     LED_Slot(selected);
                     Dbprintf ("selected: %x", selected);
                 }
                 continue;
         }else if (state == 1) {
                 // Read mode.
+                LED_D_ON();
                 DbpString("State=1 read mode- click to read- hold to simulate");
                 if (button_pressed > 0) {
                     // Long press - switch to read mode
@@ -168,19 +170,22 @@ void RunMod() {
                     SpinUp(100);
                     LED_Slot(selected);
                     state = 2;
+                    LED_D_OFF();
                 } else if (button_pressed < 0) {
                     // Click - exit to select mode
                     DbpString("Short Press- reading card");
                                       
                     CmdEM410xdemod(1, &high[selected], &low[selected], 0);
                     
-                    Dbprintf("read card: ",low[selected]);
+                    Dbprintf("read card: %x",low[selected]);
                     FlashLEDs(100, 5);
                     state = 1;
                 }
                 continue;
         } else if (state == 2) {
                 // Simulate mode
+                LED_C_ON();
+                LED_D_ON();
                 DbpString("State=2 simulate mode - click to simulate - hold to write");
                 if (button_pressed > 0) {
                     // Long press - switch to read mode
@@ -188,6 +193,8 @@ void RunMod() {
                     SpinDown(100);
                     LED_Slot(selected);
                     state = 3;
+                    LED_C_OFF();
+                    LED_D_OFF();
                 } else if (button_pressed < 0) {
                     // Click - start simulating. Click again to exit from simulate mode
                     DbpString("Short Press - simulating - click again to simualte");
@@ -209,7 +216,7 @@ void RunMod() {
                     SpinDown(100);
                     LED_Slot(selected);
                     LEDsoff();
-                    Dbprintf("data available", data_available);
+                    Dbprintf("data available %x", data_available);
                     //data_available = False;
                     break;
                     //state = 0;
