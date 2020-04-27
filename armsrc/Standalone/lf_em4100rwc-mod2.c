@@ -164,7 +164,6 @@ void RunMod() {
                 // Read mode.
                 LED_D_ON();
                 DbpString("State=1 read mode- click to read- hold to simulate");
-                button_pressed = -1;
                 if (button_pressed > 0) {
                     // Long press - switch to read mode
                     DbpString("Long Press- switch to state=2 simulate");
@@ -175,9 +174,7 @@ void RunMod() {
                 } else if (button_pressed < 0) {
                     // Click - exit to select mode
                     DbpString("Short Press- reading card");
-                                      
                     CmdEM410xdemod(1, &high[selected], &low[selected], 0);
-                    
                     Dbprintf("read card: %x",high[selected]);
                     FlashLEDs(100, 5);
                     state = 1;
@@ -185,11 +182,8 @@ void RunMod() {
                 continue;
         } else if (state == 2) {
                 // Simulate mode
-                
-                
-                DbpString("State=2 simulate mode - click to simulate - hold to write");
-                button_pressed = -1;
-                if (button_pressed > 0) {
+               DbpString("State=2 simulate mode - click to simulate - hold to write");
+               if (button_pressed > 0) {
                     // Long press - switch to read mode
                     DbpString("Long Press - switch to state=3 write mode");
                     SpinDown(100);
