@@ -209,7 +209,7 @@ void RunMod() {
                 } else if (button_pressed < 0) {
                     // Click - write ID to tag
                     DbpString("Short Press- writing tag");
-                    WriteEM410x(0, (uint32_t)(low[selected] >> 32), (uint32_t)(low[selected] & 0xffffffff));
+                    WriteEM410x(1, (uint32_t)(low[selected] >> 32), (uint32_t)(low[selected] & 0xffffffff));
                     LED_Slot(selected);
                     state = 3; // Switch to select mode
                     //DbpString("State=0 select mode");
