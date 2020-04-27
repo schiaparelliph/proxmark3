@@ -179,7 +179,7 @@ void RunMod() {
                     FlashLEDs(100, 5);
                     state = 2;
                     LED_D_OFF();
-                }
+                
                 continue;
         } else if (state == 2) {
                 // Simulate mode
@@ -205,7 +205,7 @@ void RunMod() {
                     state = 2; // Switch to write mode
         
                   if (button_pressed > 0) {
-                     Long press - switch to read mode
+                     //Long press - switch to read mode
                    DbpString("Long Press - switch to state=3 write mode");
                     SpinDown(100);
                     LED_Slot(selected);
@@ -214,7 +214,7 @@ void RunMod() {
                     LED_D_OFF();
                    }
                     
-                }
+                
                 continue;
         } else if (state == 3) {
                 // Write tag mode
