@@ -174,16 +174,13 @@ void RunMod() {
                 // Simulate mode
               
                     // Click - start simulating. Click again to exit from simulate mode
-                    LED_C_ON();
-                    LED_D_ON();
+                    
                     DbpString("simulating");
                     LED_Slot(selected);
                     ConstructEM410xEmulBuf(ReversQuads(low[selected]));
                     FlashLEDs(100, 5);
                     SimulateTagLowFrequency(buflen, 0, 1);
                     LED_Slot(selected);
-                    LED_C_ON();
-                    LED_D_ON();
                     state = 2; // keep simulating
         
                   if (button_pressed > 0) {
@@ -192,13 +189,13 @@ void RunMod() {
                     SpinDown(100);
                     LED_Slot(selected);
                     state = 3;
-                    LED_C_OFF();
-                    LED_D_OFF();
-                   }
+                  }
                continue;
         } else if (state == 3) {
                 // Write tag mode
-                DbpString("State=3 write tag- click to write- hold to exit");
+                    DbpString("State=3 write tag- click to write- hold to exit");
+                    LED_C_ON();
+                    LED_D_ON();
                 if (button_pressed > 0) {
                     // Long press - switch to select mode
                     DbpString("Long Press- exit");
