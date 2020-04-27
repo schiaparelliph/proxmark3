@@ -164,6 +164,7 @@ void RunMod() {
                 // Read mode.
                 LED_D_ON();
                 DbpString("State=1 read mode- click to read- hold to simulate");
+                button_pressed = -1;
                 if (button_pressed > 0) {
                     // Long press - switch to read mode
                     DbpString("Long Press- switch to state=2 simulate");
@@ -177,16 +178,17 @@ void RunMod() {
                                       
                     CmdEM410xdemod(1, &high[selected], &low[selected], 0);
                     
-                    Dbprintf("read card: %x",low[selected]);
+                    Dbprintf("read card: %x",high[selected]);
                     FlashLEDs(100, 5);
                     state = 1;
                 }
                 continue;
         } else if (state == 2) {
                 // Simulate mode
-                LED_C_ON();
-                LED_D_ON();
+                
+                
                 DbpString("State=2 simulate mode - click to simulate - hold to write");
+                button_pressed = -1;
                 if (button_pressed > 0) {
                     // Long press - switch to read mode
                     DbpString("Long Press - switch to state=3 write mode");
@@ -201,6 +203,8 @@ void RunMod() {
                     LED_Slot(selected);
                     ConstructEM410xEmulBuf(ReversQuads(low[selected]));
                     FlashLEDs(100, 5);
+                    LED_C_ON();
+                    LED_D_ON();
                     SimulateTagLowFrequency(buflen, 0, 1);
                     LED_Slot(selected);
                     state = 2; // Switch to simulate mode
