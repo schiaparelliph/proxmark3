@@ -182,7 +182,9 @@ void RunMod() {
                     FlashLEDs(100, 5);
                     SimulateTagLowFrequency(buflen, 0, 1);
                     LED_Slot(selected);
-                    state = 2; // Switch to write mode
+                    LED_C_ON();
+                    LED_D_ON();
+                    state = 2; // keep simulating
         
                   if (button_pressed > 0) {
                      //Long press - switch to read mode
