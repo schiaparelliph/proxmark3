@@ -146,6 +146,8 @@ void RunMod() {
         if (state == 0) {
             // Select mode
                 Dbprintf("State=0 select slot -click to select next- hold to read", selected);
+                //flash LED D
+                    SpinErr(LED_D,100,12);
                 if (button_pressed == 1) {
                     // Long press - switch to simulate mode
                     DbpString("Long Press, switch to state=2 read");
