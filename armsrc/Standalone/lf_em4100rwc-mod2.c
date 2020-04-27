@@ -143,7 +143,7 @@ void RunMod() {
         SpinDelay(300);
         if (state == 0) {
             // Select mode
-                Dbprintf("State=0 select slot -click to select next- hold to read", selected);
+                Dbprintf("State=0 select slot -click to select next- hold to read slot: %x", selected);
                if (button_pressed == 1) {
                     // Long press - switch to simulate mode
                     DbpString("Long Press, switch to state=2 read");
@@ -153,8 +153,10 @@ void RunMod() {
                 } else if (button_pressed < 0) {
                     // Click - switch to next slot
                     DbpString("Short Press, select next slot");
-                    selected = (selected + 1) % slots_count;
+                  //  selected = (selected + 1) % slots_count;
+                    selected = (selected + 1);
                     LED_Slot(selected);
+                    Dbprintf ("selected: %x", selected);
                 }
                 continue;
         }else if (state == 1) {
