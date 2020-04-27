@@ -139,9 +139,7 @@ void RunMod() {
         if (data_available()) break;
         
         int button_pressed = BUTTON_HELD(1000);
-        if (button_pressed == BUTTON_HOLD)
-            break;
-        
+               
         SpinDelay(300);
         if (state == 0) {
             // Select mode
